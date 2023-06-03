@@ -4,6 +4,7 @@ function searchForTermsInLinks() {
     const links = document.getElementsByTagName("a");
     const url = window.location.host;
     const allUrls = [];
+    let count = 0;
     for (let i = 0; i < links.length; i++) {
       const link = links[i];
       const linkText = link.innerText.toLowerCase();
@@ -16,6 +17,32 @@ function searchForTermsInLinks() {
         link.style.backgroundColor = "yellow";
         const pageUrl = `https://${url}${href}`;
         allUrls.push(pageUrl);
+
+
+        link.style.position = "relative";
+        
+        var loader = document.createElement('img');
+        loader.src = "https://ik.ourlittlejoys.com/MumbaiHacks/Spinner-1s-200px_bsG7KgAUv.gif?updatedAt=1685795166573";
+        loader.className = "signwiseloader"+count;
+        loader.style.width = "30px";
+
+        link.parentNode.insertBefore(loader, link.nextSibling);
+
+        var newDiv = document.createElement('div');
+        newDiv.style.position = "absolute";
+        newDiv.style.left = "150px";
+        newDiv.style.width = "300px";
+        newDiv.style.bottom = "0";
+        newDiv.style.background = "#000";
+        newDiv.style.color = "#fff";
+        newDiv.style.padding = "5px";
+        newDiv.style.display = "none";
+        newDiv.className = "signwisedata"+count;
+        // newDiv.textContent = 'Make sure all items in the list are related to each other.Use the same font and margin width in each bulleted point.Keep bullet points short, preferably no more than three lines long.Begin all items with the same part of speech (active verbs work well) and make sure they are in parallel form.'
+
+        link.appendChild(newDiv);
+
+        count++;
       }
     }
   }
