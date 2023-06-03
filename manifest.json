@@ -1,0 +1,18 @@
+{
+    "manifest_version": 3,
+    "name": "sign.ai",
+    "version": "1.0",
+    "description": "To show users terms and condition",
+    "action": {
+      "default_popup": "popup.html"
+    },
+    "permissions": [
+      "activeTab",
+      "scripting",
+      "tabs",
+      "https://*/*"
+    ],
+    "background": {
+        "service_worker": "background.js"
+    }
+  }
