@@ -1,6 +1,37 @@
 
+let apiResponse = null; 
+async function searchForTermsInLinks() {
+    // Create the modal container
+    const modal = document.createElement("div");
+    modal.id = "myModal";
+    modal.className = "modal";
+    modal.style.display = "none";
 
-function searchForTermsInLinks() {
+     // Create the modal content
+    const modalContent = document.createElement("div");
+    modalContent.className = "modal-content";
+
+    const closeBtn = document.createElement("span");
+    closeBtn.className = "close";
+    closeBtn.innerHTML = "&times;";
+
+     // Append the close button to the modal content
+    modalContent.appendChild(closeBtn);
+
+    // Create the modal body
+    const modalBody = document.createElement("div");
+    modalBody.id = "modalContent";
+
+    // Append the modal body to the modal content
+    modalContent.appendChild(modalBody);
+
+    // Append the modal content to the modal container
+    modal.appendChild(modalContent);
+
+    // Append the modal to the document body
+    document.body.appendChild(modal);
+
+
     const links = document.getElementsByTagName("a");
     const url = window.location.host;
     const allUrls = [];
@@ -26,9 +57,17 @@ function searchForTermsInLinks() {
         loader.className = "signwiseloader"+count;
         loader.style.width = "30px";
 
+        var iIcon = document.createElement('img');
+        iIcon.src = "https://ik.ourlittlejoys.com/MumbaiHacks/info_21Mpq2lKS.png";
+        iIcon.className = "signwiseinfoIcon"+count;
+        iIcon.style.width = "10px";
+        iIcon.style.display = "none";
+
         link.parentNode.insertBefore(loader, link.nextSibling);
+        link.parentNode.insertBefore(iIcon, link.nextSibling);
 
         var newDiv = document.createElement('div');
+
         newDiv.style.position = "absolute";
         newDiv.style.left = "150px";
         newDiv.style.width = "300px";
@@ -38,14 +77,75 @@ function searchForTermsInLinks() {
         newDiv.style.padding = "5px";
         newDiv.style.display = "none";
         newDiv.className = "signwisedata"+count;
-        // newDiv.textContent = 'Make sure all items in the list are related to each other.Use the same font and margin width in each bulleted point.Keep bullet points short, preferably no more than three lines long.Begin all items with the same part of speech (active verbs work well) and make sure they are in parallel form.'
+        newDiv.id = "signwisedata"+count;
+        // newDiv.textContent = 'Make sure all items in the list are related to each other.Use the same font and margin width in each bulleted point.Keep bullet points short, preferably no more than three lines long.Begin all items with the same part of speech (active verbs work well) and make sure they are in parallel form.';
 
         link.appendChild(newDiv);
 
         count++;
       }
     }
-  }
+
+    chrome.runtime.sendMessage({ action: "makeAjaxCall", urls: allUrls });
+
+}
+
+//   // Modal code
+// const closeBtn = document.getElementsByClassName("close")[0];
+// // Close the modal when the close button is clicked
+// closeBtn.addEventListener("click", function () {
+//     const modal = document.getElementById("myModal");
+//     modal.style.display = "none";
+// });
+
+window.addEventListener("click", function (event) {
+    const modal = document.getElementById("myModal");
+    if (event.target === modal) {
+      modal.style.display = "none";
+    }
+  });
+
+  chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+    if (request.action === "apiResponse") {
+        apiResponse = request.data.data; 
+        let count=0;
+        for (const d of apiResponse) {
+            const loaderCl = document.querySelector(".signwiseloader" + count);
+            const iconImgCl = document.querySelector(".signwiseinfoIcon" + count);
+
+            loaderCl.style.display = "none";
+            iconImgCl.style.display = "block";      
+        
+
+            const cl = document.querySelector(".signwisedata" + count);
+            
+            for (const key in d) {
+                if (d.hasOwnProperty(key)) {
+                    const riskItem = d[key];
+                    // Create a heading element for the title
+                    const titleElement = document.createElement("h3");
+                    titleElement.textContent = riskItem.title;
+
+                    // Create an unordered list for the data points
+                    const listElement = document.createElement("ul");
+
+                    for (const dataItem of riskItem.data) {
+                        const listItem = document.createElement("li");
+                        listItem.textContent = dataItem;
+                        listElement.appendChild(listItem);
+                    }
+                    cl.appendChild(titleElement);
+                    cl.appendChild(listElement);
+                    cl.style.display = "block";
+                }
+            }
+           
+
+            count++;
+        }
+    }
+  });
+  
   
   // Execute the search when the page finishes loading
   searchForTermsInLinks();
@@ -73,4 +173,3 @@ function searchForTermsInLinks() {
   
 //     await browser.close();
 // }
-   
