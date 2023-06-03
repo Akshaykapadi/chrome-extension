@@ -1,4 +1,4 @@
-const puppeteer = require('puppeteer');
+
 
 function searchForTermsInLinks() {
     const links = document.getElementsByTagName("a");
