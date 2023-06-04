@@ -1,4 +1,4 @@
-let apiResponse = null;
+let PAGE_URL = "";
 async function searchForTermsInLinks() {
   // Create the modal container
   const modal = document.createElement("div");
@@ -49,6 +49,7 @@ async function searchForTermsInLinks() {
     ) {
       link.style.backgroundColor = "yellow";
       const pageUrl = `https://${url}${href}`;
+      PAGE_URL = pageUrl;
       allUrls.push(pageUrl);
 
       link.style.position = "relative";
@@ -81,27 +82,35 @@ async function searchForTermsInLinks() {
       newDiv.className = "signwisedata" + count;
       newDiv.style.borderRadius = "8px";
       newDiv.style.position = "fixed";
-      newDiv.style.top = "15px";
-      newDiv.style.right = "15px";
-      newDiv.style.height = "200px";
+      newDiv.style.top = "20px";
+      newDiv.style.right = "20px";
+      newDiv.style.height = "300px";
       newDiv.style.border = "1px solid #fff";
-      newDiv.style.padding = "8px 16px";
+      newDiv.style.paddingTop = "18px";
+      newDiv.style.padding = "4px";
       newDiv.style.boxShadow = "0px 0px 21px -1px rgba(0,0,0, 1);";
       newDiv.style.display = "flex";
-      newDiv.style.flexDirection = "flex-row";
+      newDiv.style.flexDirection = "column";
       newDiv.style.justifyContent = "flex-start";
       newDiv.style.alignItems = "flex-start";
       newDiv.style.overflowY = "scroll";
-      const crossIcon = document.createElement("p");
+      newDiv.style.zIndex = 9000;
+      newDiv.style.display = "none";
+      const crossIcon = document.createElement("img");
       crossIcon.addEventListener("click", () => {
         document.querySelector(".signwisedata0").style.display = "none";
       });
-      crossIcon.innerText = "X";
+      crossIcon.src =
+        "https://ik.ourlittlejoys.com/MumbaiHacks/Group_1602_97QorvzVc.png?updatedAt=1685850707131";
+      // crossIcon.innerText = "X";
+      crossIcon.style.width = "25px";
+      crossIcon.style.height = "25px";
       crossIcon.style.fontSize = "18px";
       crossIcon.style.position = "absolute";
       crossIcon.style.right = "25px";
-      crossIcon.style.top = "0px";
+      crossIcon.style.top = "15px";
       crossIcon.style.cursor = "pointer";
+      crossIcon.style.zIndex = 1000;
       newDiv.appendChild(crossIcon);
       // newDiv.textContent = 'Make sure all items in the list are related to each other.Use the same font and margin width in each bulleted point.Keep bullet points short, preferably no more than three lines long.Begin all items with the same part of speech (active verbs work well) and make sure they are in parallel form.';
       document.body.appendChild(newDiv);
@@ -154,7 +163,8 @@ window.addEventListener("click", function (event) {
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   if (request.action === "apiResponse") {
-    apiResponse = request.data.data;
+    let flag = false;
+    let apiResponse = request.data.data;
     let count = 0;
     for (const d of apiResponse) {
       if (count > 0) {
@@ -167,9 +177,6 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
       iconImgCl.style.display = "block";
 
       const cl = document.querySelector(".signwisedata" + count);
-      cl.style.display = "flex";
-      cl.style.alignItems = "flex-start";
-      cl.style.justifyContent = "flex-start";
 
       for (const key in d) {
         if (d.hasOwnProperty(key)) {
@@ -178,25 +185,61 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
           const titleElement = document.createElement("h3");
           titleElement.textContent = riskItem.title;
           titleElement.style.textAlign = "left";
+          titleElement.style.fontSize = "20px";
+          titleElement.style.marginLeft = "8px";
 
           // Create an unordered list for the data points
           const listElement = document.createElement("ul");
           listElement.style.listStyleType = "none";
           listElement.style.padding = "0";
+          listElement.style.paddingLeft = "20px";
+
           for (const dataItem of riskItem.data) {
             const listItem = document.createElement("li");
             listItem.textContent = dataItem;
             listItem.style.textAlign = "left";
-            listItem.style.paddingLeft = "0";
             listElement.appendChild(listItem);
           }
-          cl.appendChild(titleElement);
-          cl.appendChild(listElement);
-          cl.style.display = "block";
+
+          if (riskItem.data.length) {
+            cl.appendChild(titleElement);
+            cl.appendChild(listElement);
+            cl.style.display = "flex";
+            cl.style.alignItems = "flex-start";
+            cl.style.justifyContent = "flex-start";
+            cl.style.flexDirection = "column";
+            flag = true;
+          }
         }
       }
 
       count++;
+    }
+
+    if (flag) {
+      const cl = document.querySelector(".signwisedata" + count);
+      const btn = document.createElement("button");
+      btn.textContent = "View All Details";
+      btn.style.border = "none";
+      btn.style.padding = "8 20px";
+      btn.style.width = "90%";
+      btn.style.display = "flex";
+      btn.style.justifyContent = "center";
+      btn.style.alignItems = "center";
+      btn.style.color = "8 20px";
+      btn.style.width = "90%";
+      btn.style.display = "flex";
+      btn.style.justifyContent = "center";
+      btn.style.alignItems = "center";
+      btn.style.borderRadius = "6px";
+      btn.style.height = "40px";
+      btn.style.background = "white";
+      btn.style.color = "black";
+      btn.style.fontWeight = "600";
+      btn.addEventListener("click", () => {
+        if (PAGE_URL) window.open(PAGE_URL, "_blank");
+      });
+      if (PAGE_URL) cl.appendChild(btn);
     }
   }
 });
