@@ -185,13 +185,13 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
           const titleElement = document.createElement("h3");
           titleElement.textContent = riskItem.title;
           titleElement.style.textAlign = "left";
-          titleElement.style.fontSize = "20px";
+          titleElement.style.fontSize = "18px";
           titleElement.style.marginLeft = "8px";
 
           // Create an unordered list for the data points
           const listElement = document.createElement("ul");
           listElement.style.listStyleType = "none";
-          listElement.style.padding = "0";
+          // listElement.style.padding = "0";
           listElement.style.paddingLeft = "20px";
 
           for (const dataItem of riskItem.data) {
