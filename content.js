@@ -37,6 +37,10 @@ async function searchForTermsInLinks() {
     const allUrls = [];
     let count = 0;
     for (let i = 0; i < links.length; i++) {
+        
+     if(count > 0){
+        break;
+     }
       const link = links[i];
       const linkText = link.innerText.toLowerCase();
       const href= link.getAttribute('href');
@@ -56,8 +60,15 @@ async function searchForTermsInLinks() {
         loader.src = "https://ik.ourlittlejoys.com/MumbaiHacks/Spinner-1s-200px_bsG7KgAUv.gif?updatedAt=1685795166573";
         loader.className = "signwiseloader"+count;
         loader.style.width = "30px";
-        link.parentNode.insertBefore(loader, link.nextSibling);
 
+        var iIcon = document.createElement('img');
+        iIcon.src = "https://ik.ourlittlejoys.com/MumbaiHacks/info_21Mpq2lKS.png";
+        iIcon.className = "signwiseinfoIcon"+count;
+        iIcon.style.width = "10px";
+        iIcon.style.display = "none";
+
+        link.parentNode.insertBefore(loader, link.nextSibling);
+        link.parentNode.insertBefore(iIcon, link.nextSibling);
         
         var newDiv = document.createElement('div');
         newDiv.style.position = "absolute";
@@ -68,43 +79,40 @@ async function searchForTermsInLinks() {
         newDiv.style.color = "#fff";
         newDiv.style.padding = "5px";
         newDiv.style.display = "none";
-        newDiv.className = "signwisedata"+count + " signwisedata";
+        newDiv.className = "signwisedata"+count ;
         newDiv.id = "signwisedata"+count;
         // newDiv.textContent = 'Make sure all items in the list are related to each other.Use the same font and margin width in each bulleted point.Keep bullet points short, preferably no more than three lines long.Begin all items with the same part of speech (active verbs work well) and make sure they are in parallel form.';
-        // link.appendChild(newDiv);
+        link.appendChild(newDiv);
 
-        link.parentNode.insertBefore(newDiv, link.nextSibling);
+        // link.parentNode.insertBefore(newDiv, link.nextSibling);
 
-        var iIcon = document.createElement('img');
-        iIcon.src = "https://ik.ourlittlejoys.com/MumbaiHacks/info_21Mpq2lKS.png";
-        iIcon.className = "signwiseinfoIcon"+count;
-        iIcon.style.width = "10px";
-        iIcon.style.display = "none";
-        iIcon.setAttribute('data-signwisepopup', 'signwiseresult'+count);
-        iIcon.addEventListener('click', function() {
-          // let allData = document.getElementsByClassName("signwisedata");
-          // allData.style.display = "none";
+        // var iIcon = document.createElement('img');
+        // iIcon.src = "https://ik.ourlittlejoys.com/MumbaiHacks/info_21Mpq2lKS.png";
+        // iIcon.className = "signwiseinfoIcon"+count;
+        // iIcon.style.width = "10px";
+        // iIcon.style.display = "none";
+        // iIcon.setAttribute('data-signwisepopup', 'signwiseresult'+count);
+        // iIcon.addEventListener('click', function() {
+        //   // let allData = document.getElementsByClassName("signwisedata");
+        //   // allData.style.display = "none";
 
-          var elements = document.querySelectorAll('.signwisedata');
+        //   var elements = document.querySelectorAll('.signwisedata');
 
-          // Iterate over the elements and hide them
-          for (var i = 0; i < elements.length; i++) {
-            elements[i].style.display = 'none';
-          }
+        // //   // Iterate over the elements and hide them
+        // //   for (var i = 0; i < elements.length; i++) {
+        // //     elements[i].style.display = 'none';
+        // //   }
 
-          const d = document.querySelector(".signwisedata" + Number(count-1));
-          d.style.display ="block";
-        });
-        link.parentNode.insertBefore(iIcon, link.nextSibling);
+        //   const d = document.querySelector(".signwisedata" + count);
+        //   d.style.display ="block";
+        // });
+        // link.parentNode.insertBefore(iIcon, link.nextSibling);
 
 
         count++;
       }
     }
-
     chrome.runtime.sendMessage({ action: "makeAjaxCall", urls: allUrls });
-
-
 }
 
 
@@ -128,11 +136,14 @@ window.addEventListener("click", function (event) {
         apiResponse = request.data.data; 
         let count=0;
         for (const d of apiResponse) {
+            if(count > 0){
+                break;
+            }
             const loaderCl = document.querySelector(".signwiseloader" + count);
             const iconImgCl = document.querySelector(".signwiseinfoIcon" + count);
 
             loaderCl.style.display = "none";
-            iconImgCl.style.display = "inherit";      
+            iconImgCl.style.display = "block";      
         
 
             const cl = document.querySelector(".signwisedata" + count);
@@ -154,7 +165,7 @@ window.addEventListener("click", function (event) {
                     }
                     cl.appendChild(titleElement);
                     cl.appendChild(listElement);
-                    // cl.style.display = "block";
+                    cl.style.display = "block";
                 }
             }
            
